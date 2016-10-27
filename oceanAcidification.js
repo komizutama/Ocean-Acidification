@@ -1,17 +1,21 @@
+const numIons = 50;
 var molecules = [];
 
 function setup() {
- createCanvas(windowWidth, windowHeight);
- for (var i=0; i <50; i++); {
-  molecules.push(new atom())
- }
+  // Create Canvas
+  createCanvas(windowWidth, windowHeight); 
+  // Create objects
+  for (var i=0; i < numIons; i++) {
+    molecules.push(new ion());
+    console.log(i);
+  }
 }
 
 function draw() {
   background(51);
   for (var i=0; i < molecules.length; i++) {
-    molecules[i].display();
     molecules[i].move();
+    molecules[i].display();
   }
 }
 
@@ -19,19 +23,22 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-function atom() {
+// Ion class
+function ion() {
   this.x = random(width);
   this.y = random(height);
   this.diameter = 12.5;
   this.speed = 1;
-  var deltaX = random(-this.speed, this.speed);
-  var deltaY = random(-this.speed, this.speed);
+  this.travelX = random(-this.speed, this.speed);
+  this.travelY = random(-this.speed, this.speed);
 
+// change location
   this.move = function() {
-    this.x += deltaX;
-    this.y += deltaY;
+    this.x += this.travelX;
+    this.y += this.travelY;
   };
 
+// display ion in new location
   this.display = function() {
     ellipse(this.x, this.y, this.diameter, this.diameter);
   };
