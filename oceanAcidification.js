@@ -14,7 +14,7 @@ function setup() {
 function draw() {
   background(51);
   for (var i=0; i < molecules.length; i++) {
-    molecules[i].moveWrap();
+    molecules[i].move();
     molecules[i].display();
   }
 }
@@ -45,27 +45,10 @@ function ion() {
   this.travelY = random(-this.speed, this.speed);
 
 // change location
-  this.moveWrap = function() {
-    if (this.x + this.travelX > windowWidth) {
-      this.x = 0;
-    }
-    else if (this.x + this.travelX < 0) {
-      this.x = windowWidth;
-    }
-    else {
-      this.x += this.travelX;
-    }
-
-    if (this.y + this.travelY > windowHeight) {
-      this.y = 0;
-    }
-    else if (this.y + this.travelY <0 ) {
-      this.y = windowHeight;
-    }
-    else {
-      this.y += this.travelY;
-    }
-  };
+  this.move = function() {
+    this.x = wallWrap(this.x, this.travelX, windowWidth);
+    this.y = wallWrap(this.y, this.travelY, windowHeight);
+  }
 
 // display ion in new location
   this.display = function() {
