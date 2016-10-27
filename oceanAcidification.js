@@ -11,6 +11,7 @@ function draw() {
   background(51);
   for (var i=0; i < molecules.length; i++) {
     molecules[i].display();
+    molecules[i].move();
   }
 }
 
@@ -21,10 +22,10 @@ function windowResized() {
 function atom() {
   this.x = random(width);
   this.y = random(height);
+  this.diameter = 12.5;
+  this.speed = 1;
   var deltaX = random(-this.speed, this.speed);
   var deltaY = random(-this.speed, this.speed);
-  this.diameter = 30;
-  this.speed = 1;
 
   this.move = function() {
     this.x += deltaX;
