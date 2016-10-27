@@ -14,13 +14,25 @@ function setup() {
 function draw() {
   background(51);
   for (var i=0; i < molecules.length; i++) {
-    molecules[i].move();
+    molecules[i].moveWrap();
     molecules[i].display();
   }
 }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+}
+
+function wallWrap(pos, trav, axisSize) {
+  if (pos + trav > axisSize) {
+    return 0;
+  }
+  else if (pos+trav <0){
+    return axisSize;
+  }
+  else {
+    return pos + trav;
+  }
 }
 
 // Ion class
@@ -33,9 +45,26 @@ function ion() {
   this.travelY = random(-this.speed, this.speed);
 
 // change location
-  this.move = function() {
-    this.x += this.travelX;
-    this.y += this.travelY;
+  this.moveWrap = function() {
+    if (this.x + this.travelX > windowWidth) {
+      this.x = 0;
+    }
+    else if (this.x + this.travelX < 0) {
+      this.x = windowWidth;
+    }
+    else {
+      this.x += this.travelX;
+    }
+
+    if (this.y + this.travelY > windowHeight) {
+      this.y = 0;
+    }
+    else if (this.y + this.travelY <0 ) {
+      this.y = windowHeight;
+    }
+    else {
+      this.y += this.travelY;
+    }
   };
 
 // display ion in new location
