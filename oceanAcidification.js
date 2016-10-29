@@ -16,6 +16,7 @@ function draw() {
   background(backgroundColor);
   for (var i=0; i < molecules.length; i++) {
     molecules[i].checkEdges(bouncey);
+    console.log(molecules[i].checkCollision(i))
     molecules[i].move();
     // molecules[i].displayDot();
     molecules[i].displayECloud();
@@ -79,6 +80,18 @@ function ion() {
         this.position[i] = wallWrap(this.position[i], this.delta[i], this.canvasSize[i]);
       }
     }
+  }
+
+  this.checkCollision = function(i) {
+    for (var j = i+1; j < molecules.length; j++) {
+      var dx = Math.abs(molecules[i].position[0])-Math.abs(molecules[j].position[0]);
+      var dy = Math.abs(molecules[i].position[1])-Math.abs(molecules[j].position[1]);
+      var distance = Math.sqrt(dx * dx + dy * dy)
+
+      if (distance < molecules[i].diameter + molecules[j].diameter) {
+        return true;
+      }
+    }  
   }
 
 // change location
