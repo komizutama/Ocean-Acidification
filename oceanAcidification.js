@@ -91,9 +91,13 @@ function ion() {
 
   this.displayECloud = function () {
     var h = 100;
-    for (var r = this.diameter; r > 0; r--) {
+    var eCloudColor = color(255, 142, 0, 50);
+    noStroke();
+    fill(eCloudColor);
+    ellipse (this.position[0],this.position[1], this.diameter, this.diameter)
+    for (var r = this.diameter*.5; r > 0; r--) {
       var ionColor = color(255, 142, 0, h);
-      h= 100-r*100/this.diameter;
+      h= 100-100/r;
       noStroke();
       fill(ionColor);
       ellipse(this.position[0], this.position[1], r, r);
