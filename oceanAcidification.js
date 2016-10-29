@@ -44,11 +44,11 @@ function wallWrap(pos, trav, axisSize) {
   }
 }
 
-function wallBounce(pos, trav, axisSize){
-  if (pos + trav > axisSize) {
+function wallBounce(pos, trav, axisSize, diam){
+  if (pos + trav + diam/2> axisSize) {
     return -trav;
   }
-  else if (pos + trav <0){
+  else if (pos + trav - diam/2 <0){
     return -trav;
   }
   else {
@@ -59,10 +59,10 @@ function wallBounce(pos, trav, axisSize){
 function ion() {
   this.mass = 1;
   this.charge = 1;
-  this.diameter = 12.5;
+  this.diameter = 14;
   this.speed = 1;
   this.ionColor = color(255, 142, 0);
-  this.position = [random(width), random(height)];
+  this.position = [random(width-this.diameter/2)+this.diameter/2, random(height-this.diameter/2)+this.diameter/2];
   this.delta = [random(-this.speed, this.speed), random(-this.speed, this.speed)];
   this.canvasSize = [windowWidth, windowHeight];
 
@@ -71,7 +71,7 @@ function ion() {
   this.checkEdges = function(b) {
     if (b) {
       for (var i=0; i < this.position.length; i++) {
-        this.delta[i] = wallBounce(this.position[i], this.delta[i], this.canvasSize[i]);
+        this.delta[i] = wallBounce(this.position[i], this.delta[i], this.canvasSize[i], this.diameter);
       }
     }
     else {
@@ -100,7 +100,7 @@ function ion() {
     }
   }
 
-// display ion in new location
+// display as a dot.
   this.displayDot = function() { 
     fill(this.ionColor);
     ellipse(this.position[0], this.position[1], this.diameter, this.diameter);
