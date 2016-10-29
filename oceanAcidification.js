@@ -1,6 +1,8 @@
-const numIons = 5;
+const numIons = 50;
 var molecules = [];
 var bouncey = true;
+
+// http://paletton.com/#uid=73v1c0kllll0W7ob8envysjYfES
 
 function setup() {
   // Create Canvas
@@ -10,12 +12,13 @@ function setup() {
 }
 
 function draw() {
-  background(51);
+  var backgroundColor = color(75, 75, 78);
+  background(backgroundColor);
   for (var i=0; i < molecules.length; i++) {
     molecules[i].checkEdges(bouncey);
     molecules[i].move();
-    // molecules[i].moveBounce();
-    molecules[i].display();
+    // molecules[i].displayDot();
+    molecules[i].displayECloud();
   }
 }
 
@@ -58,9 +61,11 @@ function ion() {
   this.charge = 1;
   this.diameter = 12.5;
   this.speed = 1;
+  this.ionColor = color(255, 142, 0);
   this.position = [random(width), random(height)];
   this.delta = [random(-this.speed, this.speed), random(-this.speed, this.speed)];
   this.canvasSize = [windowWidth, windowHeight];
+
 
 // Check if hitting the wall
   this.checkEdges = function(b) {
@@ -75,6 +80,7 @@ function ion() {
       }
     }
   }
+
 // change location
   this.move = function() {
     for (var i=0; i < this.position.length; i++){
@@ -82,19 +88,22 @@ function ion() {
     }
   }
 
-  // this.moveBounce = function() {
-  //   if ((this.newPosY > (windowHeight-20)) || (this.newPosY < 20)) {
-  //     this.delY = -this.delY;
-  //   }
-  //   if ((this.newPosX > (windowWidth-20)) || (this.newPosX < 20)) {
-  //     this.delX = -this.delX;
-  //   }
-  //   this.x =+ this.delX;
-  //   this.y =+ this.delY;
-  // }
+
+  this.displayECloud = function () {
+    var h = 100;
+    for (var r = this.diameter; r > 0; r--) {
+      var ionColor = color(255, 142, 0, h);
+      h= 100-r*100/this.diameter;
+      noStroke();
+      fill(ionColor);
+      ellipse(this.position[0], this.position[1], r, r);
+    }
+  }
 
 // display ion in new location
-  this.display = function() {
+  this.displayDot = function() { 
+    fill(this.ionColor);
     ellipse(this.position[0], this.position[1], this.diameter, this.diameter);
+    noStroke();
   }
 }
