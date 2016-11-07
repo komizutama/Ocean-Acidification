@@ -54,6 +54,10 @@ function unitTan (unitNormal) {
   return unitTan;
 }
 
+function dotProduct(vectorA, vectorB) {
+  return vectorA[0] * vectorB[0] + vectorA[1] * vectorB[1];
+}
+
 
 function wallWrap(pos, trav, axisSize) {
   if (pos + trav > axisSize) {
@@ -123,8 +127,14 @@ function ion() {
   }
 
   this.elasticCollision = function (molA, MolB) {
-    unitNormal= unitTan(molA.position, molB.position);
-    unitTan(unitNormal);
+    let unitNormal= unitNormal(molA.position, molB.position);
+    let unitTan = unitTan(unitNormal);
+    let vecANormI = dotProduct(unitNormal, molA.velocity);
+    let vecBNormI = dotProduct(unitNormal, molB.velocity);
+    let vecATanF = dotProduct(unitTan, molA.velocity);
+    let vecBTanF = dotProduct(unitTan, molB.velocity);
+    let vecANormF = (vecANormI(molA.mass-molB.mass)+2*molB.mass*vecBNormI)/(molA.mass+mol.mass);
+    let vecBNormF = (vecBNormI(molB.mass-molA.mass)+2*molA.mass*vecANormI)/(molA.mass+molB.mass);
   }
 
 // change location
