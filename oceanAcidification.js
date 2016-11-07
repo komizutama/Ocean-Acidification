@@ -58,6 +58,27 @@ function dotProduct(vectorA, vectorB) {
   return vectorA[0] * vectorB[0] + vectorA[1] * vectorB[1];
 }
 
+function addVectors(vectorA, vectorB) {
+  return [vectorA[0]+vectorB[0], vectorA[1]+vectorB[1]];
+}
+
+function elasticCollision(molA, MolB) {
+  let unitNormal= unitNormal(molA.position, molB.position);
+  let unitTan = unitTan(unitNormal);
+  let vecANormI = dotProduct(unitNormal, molA.velocity);
+  let vecBNormI = dotProduct(unitNormal, molB.velocity);
+  let velATanF = dotProduct(unitTan, molA.velocity);
+  let velBTanF = dotProduct(unitTan, molB.velocity);
+  let velANormF = (vecANormI(molA.mass-molB.mass)+2*molB.mass*vecBNormI)/(molA.mass+mol.mass);
+  let velBNormF = (vecBNormI(molB.mass-molA.mass)+2*molA.mass*vecANormI)/(molA.mass+molB.mass);
+  let vecANormF = [unitNormal[0]*velANormF, unitNormal[1] * velANormF];
+  let vecBNormF = [unitNormal[1]*velBNormF, unitNormal[1] *velBNormF];
+  let vecATanF = [unitTan[0] * velATanF, unitTan[1]*velATanF];
+  let vecBTanF = [unitTan[0] * velBTanF, unitTan[1] * velBTanF];
+  molA.velocity = addVectors(vecANormF, vecATanF);
+  molB.velocity = addVectors(vecBNormF, vecBTanF);
+}
+
 
 function wallWrap(pos, trav, axisSize) {
   if (pos + trav > axisSize) {
@@ -126,16 +147,7 @@ function ion() {
     }  
   }
 
-  this.elasticCollision = function (molA, MolB) {
-    let unitNormal= unitNormal(molA.position, molB.position);
-    let unitTan = unitTan(unitNormal);
-    let vecANormI = dotProduct(unitNormal, molA.velocity);
-    let vecBNormI = dotProduct(unitNormal, molB.velocity);
-    let vecATanF = dotProduct(unitTan, molA.velocity);
-    let vecBTanF = dotProduct(unitTan, molB.velocity);
-    let vecANormF = (vecANormI(molA.mass-molB.mass)+2*molB.mass*vecBNormI)/(molA.mass+mol.mass);
-    let vecBNormF = (vecBNormI(molB.mass-molA.mass)+2*molA.mass*vecANormI)/(molA.mass+molB.mass);
-  }
+
 
 // change location
   this.move = function() {
