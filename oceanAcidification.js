@@ -21,7 +21,7 @@ function draw() {
 function movementHandler () {
   for (var i=0; i < molecules.length; i++) {
     molecules[i].checkEdges(bouncey);
-    // molecules[i].elasticCollision(i);
+    molecules[i].collisionHandler(i);
     molecules[i].move();
     // molecules[i].displayDot();
     molecules[i].displayECloud();
@@ -62,19 +62,19 @@ function addVectors(vectorA, vectorB) {
   return [vectorA[0]+vectorB[0], vectorA[1]+vectorB[1]];
 }
 
-function elasticCollision(molA, MolB) {
-  let unitNormal= unitNormal(molA.position, molB.position);
-  let unitTan = unitTan(unitNormal);
-  let vecANormI = dotProduct(unitNormal, molA.velocity);
-  let vecBNormI = dotProduct(unitNormal, molB.velocity);
-  let velATanF = dotProduct(unitTan, molA.velocity);
-  let velBTanF = dotProduct(unitTan, molB.velocity);
-  let velANormF = (vecANormI(molA.mass-molB.mass)+2*molB.mass*vecBNormI)/(molA.mass+mol.mass);
-  let velBNormF = (vecBNormI(molB.mass-molA.mass)+2*molA.mass*vecANormI)/(molA.mass+molB.mass);
-  let vecANormF = [unitNormal[0]*velANormF, unitNormal[1] * velANormF];
-  let vecBNormF = [unitNormal[1]*velBNormF, unitNormal[1] *velBNormF];
-  let vecATanF = [unitTan[0] * velATanF, unitTan[1]*velATanF];
-  let vecBTanF = [unitTan[0] * velBTanF, unitTan[1] * velBTanF];
+function elasticCollision(molA, molB) {
+  let uN= unitNormal(molA.position, molB.position);
+  let uT = unitTan(uN);
+  let vecANormI = dotProduct(uN, molA.velocity);
+  let vecBNormI = dotProduct(uN, molB.velocity);
+  let velATanF = dotProduct(uT, molA.velocity);
+  let velBTanF = dotProduct(uT, molB.velocity);
+  let velANormF = ((vecANormI*(molA.mass-molB.mass)+2*molB.mass*vecBNormI)/(molA.mass+molB.mass));
+  let velBNormF = ((vecBNormI*(molB.mass-molA.mass)+2*molA.mass*vecANormI)/(molA.mass+molB.mass));
+  let vecANormF = [uN[0]*velANormF, uN[1] * velANormF];
+  let vecBNormF = [uN[1]*velBNormF, uN[1] *velBNormF];
+  let vecATanF = [uT[0] * velATanF, uT[1]*velATanF];
+  let vecBTanF = [uT[0] * velBTanF, uT[1] * velBTanF];
   molA.velocity = addVectors(vecANormF, vecATanF);
   molB.velocity = addVectors(vecBNormF, vecBTanF);
 }
@@ -141,7 +141,7 @@ function ion() {
         if (distance < molecules[i].diameter + molecules[j].diameter) {
           collisionLog[i] = true;
           collisionLog[j] = true;
-          this.elasticCollision[this.molecules[i], this.molecules[j]]
+          elasticCollision(molecules[i], molecules[j]);
         }
       }
     }  
