@@ -44,7 +44,7 @@ function unitNormal (posA, posB) {
   var normalVec = [(posB[0]-posA[0]), (posB[1]-posA[1])];
   var unitNormal=[];
   for (var i=0; i < normalVec.length; i++){
-    unitNormal.push(normalVec[i]/Math.sqrt(Math.pow(unitNormal[0],2)+Math.pow(unitNormal[1], 2)));
+    unitNormal.push(normalVec[i]/Math.sqrt(Math.pow(normalVec[0],2)+Math.pow(normalVec[1], 2)));
   }
   return unitNormal;
 }
