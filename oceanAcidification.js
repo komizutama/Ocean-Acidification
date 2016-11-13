@@ -77,6 +77,16 @@ function elasticCollision(molA, molB) {
   let vecBTanF = [uT[0] * velBTanF, uT[1] * velBTanF];
   molA.velocity = addVectors(vecANormF, vecATanF);
   molB.velocity = addVectors(vecBNormF, vecBTanF);
+  var dx = Math.abs(molA.position[0])-Math.abs(molB.position[0]);
+  var dy = Math.abs(molA.position[1])-Math.abs(molB.position[1]);
+  var distance = Math.sqrt(dx * dx + dy * dy)
+  while (distance < molA.diameter + molB.diameter){
+    molA.move();
+    molB.move();
+    var dx = Math.abs(molA.position[0])-Math.abs(molB.position[0]);
+    var dy = Math.abs(molA.position[1])-Math.abs(molB.position[1]);
+    var distance = Math.sqrt(dx * dx + dy * dy)
+  }
 }
 
 
