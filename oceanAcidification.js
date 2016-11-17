@@ -1,4 +1,4 @@
-const numIons = 50;
+const numIons = 20;
 var molecules = [];
 var bouncey = true;
 var collisionLog = [];
@@ -20,7 +20,7 @@ function draw() {
 
 function movementHandler () {
   for (var i=0; i < molecules.length; i++) {
-    molecules[i].checkEdges(bouncey);
+    molecules[i].checkEdges("bouncey");
     molecules[i].collisionHandler(i);
     molecules[i].move();
     // molecules[i].displayDot();
@@ -77,16 +77,16 @@ function elasticCollision(molA, molB) {
   let vecBTanF = [uT[0] * velBTanF, uT[1] * velBTanF];
   molA.velocity = addVectors(vecANormF, vecATanF);
   molB.velocity = addVectors(vecBNormF, vecBTanF);
-  var dx = Math.abs(molA.position[0])-Math.abs(molB.position[0]);
-  var dy = Math.abs(molA.position[1])-Math.abs(molB.position[1]);
-  var distance = Math.sqrt(dx * dx + dy * dy)
-  while (distance < molA.diameter + molB.diameter){
-    molA.move();
-    molB.move();
-    var dx = Math.abs(molA.position[0])-Math.abs(molB.position[0]);
-    var dy = Math.abs(molA.position[1])-Math.abs(molB.position[1]);
-    var distance = Math.sqrt(dx * dx + dy * dy)
-  }
+  // var dx = Math.abs(molA.position[0])-Math.abs(molB.position[0]);
+  // var dy = Math.abs(molA.position[1])-Math.abs(molB.position[1]);
+  // var distance = Math.sqrt(dx * dx + dy * dy)
+  // while (distance < molA.radius + molB.radius){
+  //   molA.move();
+  //   molB.move();
+  //   var dx = Math.abs(molA.position[0])-Math.abs(molB.position[0]);
+  //   var dy = Math.abs(molA.position[1])-Math.abs(molB.position[1]);
+  //   var distance = Math.sqrt(dx * dx + dy * dy)
+  // }
 }
 
 
@@ -102,6 +102,19 @@ function wallWrap(pos, trav, axisSize) {
   }
 }
 
+function newVel() {
+  return [random(-this.speed, this.speed), random(-this.speed, this.speed)]
+}
+
+function randNewSidePos(radius){
+  let i = Math.floor(Math.random()*4+1);
+  switch (i){
+    case 1: return [random(width-radius/2)+radius/2, 0];
+    case 2: return [random(width-radius/2)+radius/2, height];
+    case 3: return [0, random(height-radius/2)+radius/2];
+    case 4: return [width, random(height-radius/2)+radius/2];
+  }
+}
 
 
 function wallBounce(pos, trav, axisSize, diam){
@@ -119,19 +132,27 @@ function wallBounce(pos, trav, axisSize, diam){
 function ion() {
   this.mass = 1;
   this.charge = 1;
-  this.diameter = 14;
+  this.radius = 7;
   this.speed = 1;
   this.ionColor = color(255, 142, 0);
-  this.position = [random(width-this.diameter/2)+this.diameter/2, random(height-this.diameter/2)+this.diameter/2];
-  this.velocity = [random(-this.speed, this.speed), random(-this.speed, this.speed)];
+  this.position = [random(width-this.radius/2)+this.radius/2, random(height-this.radius/2)+this.radius/2];
+  this.velocity = newVel();
   this.canvasSize = [windowWidth, windowHeight];
 
 
 // Check if hitting the wall
-  this.checkEdges = function(b) {
-    if (b) {
+  this.checkEdges = function(wallType) {
+    if (wallType = "infinite") {
+      for (var i = 0; i < this.position.length; i++ ) {
+        if ((this.position[i] > this.canvasSize[i]) || (this.position[i] < 0)) {
+          this.position = randNewSidePos(this.radius);
+          this.velocity = newVel();
+        }
+      }
+    }
+    else if (wallType = "bouncey") {
       for (var i=0; i < this.position.length; i++) {
-        this.velocity[i] = wallBounce(this.position[i], this.velocity[i], this.canvasSize[i], this.diameter);
+        this.velocity[i] = wallBounce(this.position[i], this.velocity[i], this.canvasSize[i], this.radius);
       }
     }
     else {
@@ -148,7 +169,7 @@ function ion() {
         var dx = Math.abs(molecules[i].position[0])-Math.abs(molecules[j].position[0]);
         var dy = Math.abs(molecules[i].position[1])-Math.abs(molecules[j].position[1]);
         var distance = Math.sqrt(dx * dx + dy * dy)
-        if (distance < molecules[i].diameter + molecules[j].diameter) {
+        if (distance < molecules[i].radius + molecules[j].radius) {
           collisionLog[i] = true;
           collisionLog[j] = true;
           elasticCollision(molecules[i], molecules[j]);
@@ -168,14 +189,18 @@ function ion() {
 
 
   this.displayECloud = function () {
-    var h = 100;
-    var eCloudColor = color(255, 142, 0, 50);
-    noStroke();
+    let d = this.radius*2
+    let eCloudBorder = color(255, 142, 0, 80);
+    stroke(eCloudBorder);
+    noFill();
+    ellipse (this.position[0],this.position[1], d, d)
+    let eCloudColor = color(255, 142, 0, 50);
     fill(eCloudColor);
-    ellipse (this.position[0],this.position[1], this.diameter, this.diameter)
-    for (var r = this.diameter*.5; r > 0; r--) {
+    noStroke();
+    ellipse (this.position[0],this.position[1], d, d)
+    for (var r = d*2/3; r > 0; r--) {
+      let h= 100-100/r;
       var ionColor = color(255, 142, 0, h);
-      h= 100-100/r;
       noStroke();
       fill(ionColor);
       ellipse(this.position[0], this.position[1], r, r);
@@ -185,7 +210,7 @@ function ion() {
 // display as a dot.
   this.displayDot = function() { 
     fill(this.ionColor);
-    ellipse(this.position[0], this.position[1], this.diameter, this.diameter);
+    ellipse(this.position[0], this.position[1], d, this.radius);
     noStroke();
   }
 }
