@@ -15,12 +15,12 @@ function setup() {
 function draw() {
   var backgroundColor = color(75, 75, 78);
   background(backgroundColor);
-  movementHandler()
+  movementHandler();
 }
 
-function movementHandler () {
+function movementHandler() {
   for (var i=0; i < molecules.length; i++) {
-    molecules[i].checkEdges("bouncey");
+    molecules[i].checkEdges("infinite");
     molecules[i].collisionHandler(i);
     molecules[i].move();
     // molecules[i].displayDot();
@@ -30,6 +30,7 @@ function movementHandler () {
 }
 
 function reset(){
+  molecules = [];
   for (var i=0; i < numIons; i++) {
     molecules.push(new ion());
     collisionLog.push(false);
@@ -102,12 +103,12 @@ function wallWrap(pos, trav, axisSize) {
   }
 }
 
-function newVel() {
-  return [random(-this.speed, this.speed), random(-this.speed, this.speed)]
+function newVel(speed) {
+  return [random(-speed, speed), random(-speed, speed)]
 }
 
 function randNewSidePos(radius){
-  let i = Math.floor(Math.random()*4+1);
+  let i = Math.floor(Math.random()*4)+1;
   switch (i){
     case 1: return [random(width-radius/2)+radius/2, 0];
     case 2: return [random(width-radius/2)+radius/2, height];
@@ -136,13 +137,13 @@ function ion() {
   this.speed = 1;
   this.ionColor = color(255, 142, 0);
   this.position = [random(width-this.radius/2)+this.radius/2, random(height-this.radius/2)+this.radius/2];
-  this.velocity = newVel();
+  this.velocity = newVel(this.speed);
   this.canvasSize = [windowWidth, windowHeight];
 
 
 // Check if hitting the wall
   this.checkEdges = function(wallType) {
-    if (wallType = "infinite") {
+    if (wallType === "infinite") {
       for (var i = 0; i < this.position.length; i++ ) {
         if ((this.position[i] > this.canvasSize[i]) || (this.position[i] < 0)) {
           this.position = randNewSidePos(this.radius);
@@ -150,7 +151,7 @@ function ion() {
         }
       }
     }
-    else if (wallType = "bouncey") {
+    else if (wallType === "bouncey") {
       for (var i=0; i < this.position.length; i++) {
         this.velocity[i] = wallBounce(this.position[i], this.velocity[i], this.canvasSize[i], this.radius);
       }
@@ -189,8 +190,8 @@ function ion() {
 
 
   this.displayECloud = function () {
-    let d = this.radius*2
-    let eCloudBorder = color(255, 142, 0, 80);
+    let d = this.radius*2;
+    let eCloudBorder = color(255, 142, 0, 100);
     stroke(eCloudBorder);
     noFill();
     ellipse (this.position[0],this.position[1], d, d)
