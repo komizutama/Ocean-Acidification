@@ -1,4 +1,4 @@
-const numIons = 20;
+const numIons = 100;
 var molecules = [];
 var bouncey = true;
 var collisionLog = [];
@@ -20,7 +20,7 @@ function draw() {
 
 function movementHandler() {
   for (var i=0; i < molecules.length; i++) {
-    molecules[i].checkEdges("infinite");
+    molecules[i].checkEdges("bouncey");
     molecules[i].collisionHandler(i);
     molecules[i].move();
     // molecules[i].displayDot();
@@ -40,7 +40,7 @@ function reset(){
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
-
+//Vector Functions
 function unitNormal (posA, posB) {
   var normalVec = [(posB[0]-posA[0]), (posB[1]-posA[1])];
   var unitNormal=[];
@@ -137,7 +137,9 @@ function ion() {
   this.speed = 1;
   this.ionColor = color(255, 142, 0);
   this.position = [random(width-this.radius/2)+this.radius/2, random(height-this.radius/2)+this.radius/2];
+  this.oldPosition = [];
   this.velocity = newVel(this.speed);
+  this.oldVelocity = [];
   this.canvasSize = [windowWidth, windowHeight];
 
 
@@ -146,13 +148,16 @@ function ion() {
     if (wallType === "infinite") {
       for (var i = 0; i < this.position.length; i++ ) {
         if ((this.position[i] > this.canvasSize[i]) || (this.position[i] < 0)) {
+          this.oldPosition = this.position;
           this.position = randNewSidePos(this.radius);
+          this.oldVelocity = this.velocity;
           this.velocity = newVel();
         }
       }
     }
     else if (wallType === "bouncey") {
       for (var i=0; i < this.position.length; i++) {
+        this.oldVelocity = this.velocity;
         this.velocity[i] = wallBounce(this.position[i], this.velocity[i], this.canvasSize[i], this.radius);
       }
     }
